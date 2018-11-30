@@ -34,7 +34,9 @@ public:
 
 				chooser.AddObject("Turn-90",std::shared_ptr<Turn>(new Turn(-90)));
 				chooser.AddObject("Turn180",std::shared_ptr<Turn>(new Turn(180)));
+				chooser.AddObject("30", std::shared_ptr<DriveForward>(new DriveForward(30)));
 				chooser.AddObject("100", std::shared_ptr<DriveForward>(new DriveForward(100)));
+				chooser.AddObject("200", std::shared_ptr<DriveForward>(new DriveForward(200)));
 				//initCommand = chooser.GetSelected();
 
 				frc::SmartDashboard::PutData("Auto Modes", &chooser);

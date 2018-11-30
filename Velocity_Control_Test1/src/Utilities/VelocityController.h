@@ -4,7 +4,7 @@
 class VelocityController {
 public:
 	VelocityController(double setPoint);
-	double Tick(double measuredValue);
+	double Tick(double measuredValue, double time);
 	void SetSetPoint(double setPoint);
 	double GetSetPoint();
 	double GetError();
@@ -16,7 +16,9 @@ private:
 	double velocity;
 	double error;
 	double acceleration;
-	double division[3];
+	double distance1;
+	double distance2;
+	double distance3;
 	double time1;
 	double time2;
 	double time3;

@@ -10,6 +10,8 @@ private:
 	double setpoint;
 	double position_avg;
 	double velocity;
+	double time1;
+	double time2;
 	VelocityController* velocityCont;
 public:
 	DriveForward(double _setpoint);

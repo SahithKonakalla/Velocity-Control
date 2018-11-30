@@ -1,39 +1,44 @@
 #include "VelocityController.h"
 #include "RobotMap.h"
+#include <iostream>
 
 VelocityController::VelocityController(double setPoint){
-	this->setPoint = setPoint;
-	this->velocity = 0;
+	this->setPoint = setPoint*(4096.0/(6.0*3.1415));
+	this->velocity = VELOCITY_MIN;
 	this->error = setPoint;
-	this->division[0] = setPoint/3;
-	this->division[1] = setPoint/3.0+division[0];
-	this->division[2] = setPoint/3.0+division[1];
-	this->time1=(2*division[0])/VELOCITY_MAX;
-	this->time2=(2*(division[1]-division[0]))/(VELOCITY_MAX*2);
-	this->time3=(2*division[2])/VELOCITY_MAX;
+	this->distance1 = setPoint/5.0;
+	this->distance2 = 3.0*setPoint/5.0+distance1;
+	this->distance3 = setPoint/5.0+distance2;
+	this->time1=(2*distance1)/(VELOCITY_MAX+VELOCITY_MIN);
+	this->time2=(2*(distance2-distance1))/(VELOCITY_MAX*2);
+	this->time3=(2*distance3)/(VELOCITY_MAX+VELOCITY_MIN);
 	this->time_total=time1+time2+time3;
-	this->acceleration = VELOCITY_MAX/time1;
+	this->acceleration = (VELOCITY_MAX-VELOCITY_MIN)/time1;
 }
 
-double VelocityController::Tick(double measuredValue) {
+double VelocityController::Tick(double measuredValue, double time) {
+	std::cout << "Acceleration: " << acceleration << std::endl;
 	error = setPoint-measuredValue;
-	if(measuredValue <= this->division[0]){ //in this case 2 since time=setpoint/2
-		this->velocity +=acceleration/10000.0;
+	if(measuredValue <= this->distance1){
+		this->velocity +=acceleration*time;
 		return velocity;
 
 	}
-	else if(measuredValue<= this->division[1]){
+	else if(measuredValue<= this->distance2){
 		if(velocity>VELOCITY_MAX)
 			this->velocity = VELOCITY_MAX;
 		else
 			return velocity;
 		return velocity;
 	}
+	else if(error < 0){
+		velocity = -VELOCITY_MIN;
+	}
 	else{
 		if(velocity<VELOCITY_MIN){
 			return VELOCITY_MIN;
 		}
-		this->velocity -=acceleration/10000.0;
+		this->velocity -=acceleration*time;
 		return velocity;
 	}
 	return 0;
